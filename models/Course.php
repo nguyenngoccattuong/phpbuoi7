@@ -162,5 +162,49 @@ class Course {
             return false;
         }
     }
+
+    // Thêm phương thức addSoLuongColumnIfNotExists
+    public function addSoLuongColumnIfNotExists() {
+        try {
+            $this->db->query("SHOW COLUMNS FROM HocPhan LIKE 'SoLuong'");
+            $columnExists = $this->db->resultSet();
+            
+            if (empty($columnExists)) {
+                // Thêm cột SoLuong nếu chưa tồn tại
+                $this->db->query("ALTER TABLE HocPhan ADD COLUMN SoLuong INT DEFAULT 100");
+                $this->db->execute();
+                
+                // Cập nhật giá trị mặc định
+                $this->db->query("UPDATE HocPhan SET SoLuong = 100");
+                $this->db->execute();
+                
+                return true;
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    // Thêm phương thức giảm số lượng
+    public function decrementQuantity($courseId) {
+        $this->db->query("UPDATE HocPhan SET SoLuong = SoLuong - 1 WHERE MaHP = :id AND SoLuong > 0");
+        $this->db->bind(':id', $courseId);
+        return $this->db->execute();
+    }
+
+    // Thêm phương thức kiểm tra đủ số lượng
+    public function hasAvailableSlots($courseId) {
+        $this->db->query("SELECT SoLuong FROM HocPhan WHERE MaHP = :id");
+        $this->db->bind(':id', $courseId);
+        $result = $this->db->single();
+        
+        if (!$result) {
+            return false;
+        }
+        
+        return $result->SoLuong > 0;
+    }
 }
 ?>

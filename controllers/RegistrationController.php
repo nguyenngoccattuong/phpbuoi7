@@ -12,14 +12,40 @@ class RegistrationController {
     
     // Display registration form
     public function register() {
-        // Check if student is logged in
-        if(!isset($_SESSION['student_id'])) {
-            header('Location: index.php?controller=auth&action=login');
-            return;
+        // Lấy danh sách học phần
+        $courses = $this->courseModel->getAllCourses();
+        
+        // Xử lý khi form được submit
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Kiểm tra xem có học phần nào được chọn không
+            if (!isset($_POST['selected_courses']) || empty($_POST['selected_courses'])) {
+                $_SESSION['error'] = 'Vui lòng chọn ít nhất một học phần';
+                include 'views/registration/register.php';
+                return;
+            }
+            
+            // Khởi tạo mảng đăng ký trong session nếu chưa có
+            if (!isset($_SESSION['registered_courses'])) {
+                $_SESSION['registered_courses'] = [];
+            }
+            
+            // Lấy danh sách học phần đã chọn
+            $selectedCourses = $_POST['selected_courses'];
+            
+            // Thêm các học phần được chọn vào session
+            foreach ($selectedCourses as $courseId) {
+                if (!in_array($courseId, $_SESSION['registered_courses'])) {
+                    $_SESSION['registered_courses'][] = $courseId;
+                }
+            }
+            
+            $_SESSION['message'] = 'Đăng ký học phần thành công!';
+            header('Location: index.php?controller=registration&action=view');
+            exit;
         }
         
-        $courses = $this->courseModel->getCourses();
-        include 'views/course/register.php';
+        // Hiển thị form đăng ký
+        include 'views/registration/register.php';
     }
     
     // Process registration
