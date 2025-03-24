@@ -40,7 +40,7 @@ class Registration {
                 $this->db->bind(':mahp', $courseId);
                 $this->db->execute();
                 
-                // Update course capacity
+                // Update course capacity - chỉ nên giảm số lượng ở đây
                 $course = $this->getCourseCapacity($courseId);
                 if($course && $course->SoLuong > 0) {
                     $newCapacity = $course->SoLuong - 1;
