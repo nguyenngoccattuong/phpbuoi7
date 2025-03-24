@@ -23,82 +23,74 @@
         </div>
     <?php endif; ?>
     
-    <?php 
-    // Lấy học phần đã đăng ký từ session
-    $registeredCourses = isset($_SESSION['registered_courses']) ? $_SESSION['registered_courses'] : [];
-    $registrationDetails = [];
-    $totalCredits = 0;
-    
-    // Lấy thông tin chi tiết của từng học phần
-    if (!empty($registeredCourses)) {
-        foreach ($registeredCourses as $courseId) {
-            $course = $this->courseModel->getCourseById($courseId);
-            if ($course) {
-                $registrationDetails[] = $course;
-                $totalCredits += $course->SoTinChi;
-            }
-        }
-    }
-    ?>
-    
-    <?php if (empty($registrationDetails)): ?>
-        <div class="alert alert-info">
-            Chưa có học phần đăng ký.
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4>DANH SÁCH HỌC PHẦN ĐÃ ĐĂNG KÝ</h4>
         </div>
-        <p>
-            <a href="index.php?controller=course&action=index" class="btn btn-primary">Quay lại danh sách học phần</a>
-        </p>
-    <?php else: ?>
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4>Danh sách học phần đã chọn</h4>
-            </div>
-            <div class="card-body">
+        <div class="card-body">
+            <?php if (empty($registrations)): ?>
+                <div class="alert alert-info">
+                    Bạn chưa đăng ký học phần nào.
+                </div>
+            <?php else: ?>
                 <table class="table table-bordered table-hover">
                     <thead class="table-dark">
                         <tr>
+                            <th>Mã Đăng Ký</th>
+                            <th>Ngày Đăng Ký</th>
                             <th>Mã HP</th>
-                            <th>Tên học phần</th>
-                            <th>Số tín chỉ</th>
-                            <th>Thao tác</th>
+                            <th>Tên Học Phần</th>
+                            <th>Số Tín Chỉ</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($registrationDetails as $course): ?>
-                        <tr>
-                            <td><?php echo $course->MaHP; ?></td>
-                            <td><?php echo $course->TenHP; ?></td>
-                            <td><?php echo $course->SoTinChi; ?></td>
-                            <td>
-                                <a href="index.php?controller=registration&action=removeItem&id=<?php echo $course->MaHP; ?>" 
-                                   class="btn btn-danger btn-sm" 
-                                   onclick="return confirm('Bạn có chắc muốn xóa học phần này?')">
-                                    Xóa
-                                </a>
-                            </td>
+                        <?php 
+                        $totalCredits = 0; 
+                        $prevMaDK = null;
+                        foreach ($registrations as $index => $registration): 
+                            $totalCredits += $registration->SoTinChi;
+                            $rowClass = ($prevMaDK !== $registration->MaDK && $index > 0) ? 'border-top border-primary' : '';
+                            $prevMaDK = $registration->MaDK;
+                        ?>
+                        <tr class="<?php echo $rowClass; ?>">
+                            <td><?php echo $registration->MaDK; ?></td>
+                            <td><?php echo date('d/m/Y', strtotime($registration->NgayDK)); ?></td>
+                            <td><?php echo $registration->MaHP; ?></td>
+                            <td><?php echo $registration->TenHP; ?></td>
+                            <td><?php echo $registration->SoTinChi; ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2" class="text-end fw-bold">Tổng số tín chỉ:</td>
-                            <td colspan="2" class="fw-bold"><?php echo $totalCredits; ?></td>
+                            <td colspan="4" class="text-end fw-bold">Tổng số tín chỉ:</td>
+                            <td class="fw-bold"><?php echo $totalCredits; ?></td>
                         </tr>
                     </tfoot>
                 </table>
-            </div>
-            <div class="card-footer d-flex justify-content-between">
-                <div>
-                    <a href="index.php?controller=course&action=index" class="btn btn-secondary">Quay lại</a>
-                    <a href="index.php?controller=registration&action=removeAll" 
-                       class="btn btn-warning"
-                       onclick="return confirm('Bạn có chắc muốn xóa tất cả học phần?')">
-                        Xóa tất cả
-                    </a>
-                </div>
-                <a href="index.php?controller=registration&action=confirm" class="btn btn-success">Xác nhận đăng ký</a>
-            </div>
+            <?php endif; ?>
         </div>
+    </div>
+    
+    <p>
+        <a href="index.php?controller=course&action=index" class="btn btn-primary">Đăng ký thêm học phần</a>
+        <a href="index.php" class="btn btn-secondary">Về trang chủ</a>
+    </p>
+    
+    <?php if (!empty($_SESSION['registered_courses'])): ?>
+    <div class="card mt-4">
+        <div class="card-header bg-warning text-dark">
+            <h4>Học phần đang chọn (chưa đăng ký)</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Bạn có học phần đang chọn nhưng chưa xác nhận đăng ký!
+            </div>
+            <a href="index.php?controller=registration&action=register" class="btn btn-success">
+                Tiếp tục đăng ký
+            </a>
+        </div>
+    </div>
     <?php endif; ?>
 </div>
 

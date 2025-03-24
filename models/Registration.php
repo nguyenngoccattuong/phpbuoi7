@@ -138,5 +138,19 @@ class Registration {
         $this->db->bind(':id', $registrationId);
         return $this->db->resultSet();
     }
+    
+    // Thêm phương thức này để lấy tất cả đăng ký học phần
+    public function getAllRegistrations() {
+        $this->db->query("
+            SELECT dk.MaDK, dk.NgayDK, dk.MaSV, sv.HoTen, 
+                   hp.MaHP, hp.TenHP, hp.SoTinChi, hp.SoLuong
+            FROM DangKy dk
+            JOIN SinhVien sv ON dk.MaSV = sv.MaSV
+            JOIN ChiTietDangKy ct ON dk.MaDK = ct.MaDK
+            JOIN HocPhan hp ON ct.MaHP = hp.MaHP
+            ORDER BY dk.NgayDK DESC, dk.MaDK DESC
+        ");
+        return $this->db->resultSet();
+    }
 }
 ?>

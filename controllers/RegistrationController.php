@@ -290,5 +290,40 @@ class RegistrationController {
         header('Location: index.php?controller=registration&action=register');
         exit;
     }
+
+    // Thêm phương thức này để hiển thị tất cả đăng ký học phần
+    public function listAll() {
+        // Lấy tất cả đăng ký học phần
+        $allRegistrations = $this->registrationModel->getAllRegistrations();
+        
+        // Tổ chức dữ liệu theo đăng ký và học phần
+        $registrationsByMaDK = [];
+        $totalCourseCount = 0;
+        
+        foreach ($allRegistrations as $registration) {
+            if (!isset($registrationsByMaDK[$registration->MaDK])) {
+                $registrationsByMaDK[$registration->MaDK] = [
+                    'info' => [
+                        'MaDK' => $registration->MaDK,
+                        'NgayDK' => $registration->NgayDK,
+                        'MaSV' => $registration->MaSV,
+                        'HoTen' => $registration->HoTen
+                    ],
+                    'courses' => []
+                ];
+            }
+            
+            $registrationsByMaDK[$registration->MaDK]['courses'][] = [
+                'MaHP' => $registration->MaHP,
+                'TenHP' => $registration->TenHP,
+                'SoTinChi' => $registration->SoTinChi,
+                'SoLuong' => $registration->SoLuong
+            ];
+            
+            $totalCourseCount++;
+        }
+        
+        include 'views/registration/list_all.php';
+    }
 }
 ?>

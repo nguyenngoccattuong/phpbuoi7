@@ -52,6 +52,7 @@
                             <th>Mã HP</th>
                             <th>Tên học phần</th>
                             <th>Số tín chỉ</th>
+                            <th>Số lượng dự kiến</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
@@ -61,6 +62,7 @@
                             <td><?php echo $course->MaHP; ?></td>
                             <td><?php echo $course->TenHP; ?></td>
                             <td><?php echo $course->SoTinChi; ?></td>
+                            <td><?php echo $course->SoLuong; ?></td>
                             <td>
                                 <a href="index.php?controller=registration&action=removeItem&id=<?php echo $course->MaHP; ?>" 
                                    class="btn btn-danger btn-sm" 
@@ -74,7 +76,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="2" class="text-end fw-bold">Số học phần: <?php echo count($registrationDetails); ?></td>
-                            <td colspan="2" class="fw-bold">Tổng số tín chỉ: <?php echo $totalCredits; ?></td>
+                            <td colspan="3" class="fw-bold">Tổng số tín chỉ: <?php echo $totalCredits; ?></td>
                         </tr>
                     </tfoot>
                 </table>

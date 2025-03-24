@@ -24,11 +24,14 @@
                         <a class="nav-link" href="index.php?controller=course&action=index">Học Phần</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?controller=registration&action=register">Đăng Kí</a>
+                        <a class="nav-link" href="index.php?controller=registration&action=listAll">Đăng Kí</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="index.php?controller=auth&action=login">Đăng Nhập</a>
                     </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="index.php?controller=registration&action=listAll">Danh sách đăng ký</a>
+                    </li> -->
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <?php if(isset($_SESSION['student_id'])): ?>
